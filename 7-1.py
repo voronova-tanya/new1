@@ -44,11 +44,19 @@ try:
         led = [0] * (8-a) + [1] * a
         for i, j in enumerate(leds):
             GPIO.output(j, led[i])
-        if s==3.201:  # полная зарядка
-            GPIO.output(troyka,GPIO.LOW)
-        if s==0.066:     #полная разрядка конденсатора
-            t_2=time.time()
-            break
+        if s>3.201:# полная зарядка
+              GPIO.output(troyka,0)
+              while s>0.066:
+                 
+                 measured_data=[].append(s)
+                 a = int(s/3.3*9)
+                 led = [0] * (8-a) + [1] * a
+                 for i, j in enumerate(leds):
+                     GPIO.output(j, led[i])
+                 print(s)
+              t_2=time.time()
+              continue
+        print(s)
     t=t_2-t_1 # Время измерений
     plt.plot(measured_data)
     plt.show()
@@ -60,7 +68,7 @@ try:
         chastota=(len(measured_data))/t
         step=str(3.201/255)
         outfile.write('\n'.join(chastota, step))   
-        
+    print(t, t/(len(measured_data)), chastota,step)    
 finally:
     GPIO.output(dac, 0)
     GPIO.output(leds, 0)
